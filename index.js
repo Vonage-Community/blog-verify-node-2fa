@@ -16,12 +16,14 @@ const vonage = new Vonage({
   privateKey: VONAGE_APPLICATION_PRIVATE_KEY_PATH,
 });
 
-app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
-nunjucks.configure('views', { express: app })
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+nunjucks.configure('views', { express: app });
 
-// other code will go here
+app.get('/', (req, res) => {
+  res.render('index.html', { message: 'Hello, world!' })
+});
 
 app.listen(3000, () => {
   console.log('Example app listening on port 3000')
-})
+});
