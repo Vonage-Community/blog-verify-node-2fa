@@ -44,7 +44,20 @@ app.post('/verify', (req, res) => {
         res.render('index.html', { message: err });
 
       });
-})
+});
+
+app.post('/check', (req, res) => {
+       
+   vonage.verify2.checkCode(req.body.requestId, req.body.code)
+    .then((status) => {
+        console.log(`The status is ${status}`);
+        res.render('success.html');
+    })
+    .catch((err) => {
+        console.error(err);
+        res.render('index.html', { message: err });
+    }); 
+});
 
 app.listen(3000, () => {
   console.log('Example app listening on port 3000')
