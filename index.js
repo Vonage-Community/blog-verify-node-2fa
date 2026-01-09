@@ -24,9 +24,9 @@ app.get('/', (req, res) => {
   res.render('index.html', { message: 'Hello, world!' })
 });
 
-app.post('/verify', (req, res) => {
-    
-    vonage.verify2.newRequest({
+app.post('/verify', async (req, res) => {
+  try {
+    const { requestId } = await vonage.verify2.newRequest({
       brand: VERIFY_BRAND_NAME,
       workflow: [
         {
@@ -34,29 +34,24 @@ app.post('/verify', (req, res) => {
           to: req.body.number,
         },
       ],
-    })
-      .then(({requestId}) => {
-        res.render('check.html', { requestId: requestId })
-
-      })
-      .catch((err) => {
-        console.error(err);
-        res.render('index.html', { message: err });
-
-      });
+    });
+    
+    res.render('check.html', { requestId: requestId });
+  } catch (err) {
+    console.error(err);
+    res.render('index.html', { message: err });
+  }
 });
 
-app.post('/check', (req, res) => {
-       
-   vonage.verify2.checkCode(req.body.requestId, req.body.code)
-    .then((status) => {
-        console.log(`The status is ${status}`);
-        res.render('success.html');
-    })
-    .catch((err) => {
-        console.error(err);
-        res.render('index.html', { message: err });
-    }); 
+app.post('/check', async (req, res) => {
+  try {
+    const status = await vonage.verify2.checkCode(req.body.requestId, req.body.code);
+    console.log(`The status is ${status}`);
+    res.render('success.html');
+  } catch (err) {
+    console.error(err);
+    res.render('index.html', { message: err });
+  }
 });
 
 app.listen(3000, () => {
